@@ -38,7 +38,7 @@ export async function middleware(request: NextRequest) {
 
     const { role } = payload as { role: string };
 
-    // ✅ Redirect users away from unauthorized routes
+
     if (role === "SUPER_ADMIN" && userRoutes.some((r) => pathname.startsWith(r))) {
       return NextResponse.redirect(new URL("/super-admin", request.url));
     }
@@ -47,7 +47,6 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/home", request.url));
     }
 
-    // ✅ Allow access
     return NextResponse.next();
   } catch (err) {
     console.error("Token expired or invalid:", err);
