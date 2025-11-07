@@ -1,13 +1,13 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "../../../components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "../../../components/ui/select";
 import {
   Table,
   TableBody,
@@ -15,9 +15,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useToast } from "@/hooks/use-toast";
-import { AdminOrder, useOrderStore } from "@/store/useOrderStore";
+} from "../../../components/ui/table";
+import { useToast } from "../../../hooks/use-toast";
+import { AdminOrder, useOrderStore } from "../../../store/useOrderStore";
 import { useEffect } from "react";
 
 type OrderStatus = "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED";

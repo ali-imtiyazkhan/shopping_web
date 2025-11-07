@@ -1,12 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { useProductStore } from "@/store/useProductStore";
-import { useSettingsStore } from "@/store/useSettingsStore";
+import { Button } from "../../../components/ui/button";
+import { Checkbox } from "../../../components/ui/checkbox";
+import { Input } from "../../../components/ui/input";
+import { Label } from "../../../components/ui/label";
+import { useToast } from "../../../hooks/use-toast";
+import { useProductStore } from "../../../store/useProductStore";
+import { useSettingsStore } from "../../../store/useSettingsStore";
 import { ImageIcon, Upload, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 

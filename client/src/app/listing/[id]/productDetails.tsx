@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useProductStore } from "@/store/useProductStore";
+import { Button } from "../../../components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs";
+import { useProductStore } from "../../../store/useProductStore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ProductDetailsSkeleton from "./productSkeleton";
-import { useCartStore } from "@/store/useCartStore";
-import { useToast } from "@/hooks/use-toast";
+import { useCartStore } from "../../../store/useCartStore";
+import { useToast } from "../../../hooks/use-toast";
 
 function ProductDetailsContent({ id }: { id: string }) {
   const [product, setProduct] = useState<any>(null);

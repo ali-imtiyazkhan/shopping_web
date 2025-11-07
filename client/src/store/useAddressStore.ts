@@ -1,4 +1,4 @@
-import { API_ROUTES } from "@/utils/api";
+import { API_ROUTES } from "../utils/api";
 import axios from "axios";
 import { create } from "zustand";
 

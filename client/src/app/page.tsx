@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useSettingsStore } from "@/store/useSettingsStore";
+import { Button } from "../components/ui/button";
+import { useSettingsStore } from "../store/useSettingsStore";
 import { useEffect, useState } from "react";
 
 const gridItems = [

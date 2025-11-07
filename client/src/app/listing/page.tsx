@@ -1,25 +1,25 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "../../components/ui/button";
+import { Checkbox } from "../../components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+} from "../../components/ui/dialog";
+import { Label } from "../../components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
-import { useProductStore } from "@/store/useProductStore";
-import { brands, categories, sizes } from "@/utils/config";
+} from "../../components/ui/select";
+import { Slider } from "../../components/ui/slider";
+import { useProductStore } from "../../store/useProductStore";
+import { brands, categories, sizes } from "../../utils/config";
 import { ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

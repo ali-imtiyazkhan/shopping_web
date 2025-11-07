@@ -3,15 +3,15 @@
 import Image from "next/image";
 import banner from "../../../../public/images/banner2.jpg";
 import logo from "../../../../public/images/logo1.png";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Label } from "../../../components/ui/label";
+import { Input } from "../../../components/ui/input";
+import { Button } from "../../../components/ui/button";
 import Link from "next/link";
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useToast } from "../../../hooks/use-toast";
+import { useAuthStore } from "../../../store/useAuthStore";
 import { useRouter } from "next/navigation";
-import { protectSignInAction } from "@/actions/auth";
+import { protectSignInAction } from "../../../actions/auth";
 
 function LoginPage() {
   const [formData, setFormData] = useState({

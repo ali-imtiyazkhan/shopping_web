@@ -1,7 +1,7 @@
 "use client";
 
-import SuperAdminSidebar from "@/components/super-admin/sidebar";
-import { cn } from "@/lib/utils";
+import SuperAdminSidebar from "../../components/super-admin/sidebar";
+import { cn } from "../../lib/utils";
 import { useState } from "react";
 
 function SuperAdminLayout({ children }: { children: React.ReactNode }) {

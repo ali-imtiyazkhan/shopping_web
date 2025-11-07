@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "../../components/ui/skeleton";
 import { Suspense } from "react";
 import CheckoutContent from "./checkoutContent";
 

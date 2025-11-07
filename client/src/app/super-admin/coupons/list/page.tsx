@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "../../../../components/ui/button";
 import {
   Table,
   TableBody,
@@ -8,14 +8,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useCouponStore } from "@/store/useCouponStore";
+} from "../../../../components/ui/table";
+import { useCouponStore } from "../../../../store/useCouponStore";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { format } from "date-fns";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "../../../../components/ui/badge";
 import { Trash2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "../../../../hooks/use-toast";
 
 function SuperAdminCouponsListingPage() {
   const { isLoading, couponList, fetchCoupons, deleteCoupon } =
