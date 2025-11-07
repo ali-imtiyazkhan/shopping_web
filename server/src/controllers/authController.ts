@@ -18,24 +18,28 @@ function generateToken(userId: string, email: string, role: string) {
   return { accessToken, refreshToken };
 }
 
-async function setTokens(
+export function setTokens(
   res: Response,
   accessToken: string,
   refreshToken: string
 ) {
+  const isProduction = process.env.RUNTIME_ENV === "production";
+
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 60 * 60 * 1000,
   });
+
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 7 * 24 * 60 * 60,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 }
+
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
