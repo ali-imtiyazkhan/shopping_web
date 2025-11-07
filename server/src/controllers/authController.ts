@@ -23,7 +23,9 @@ export function setTokens(
   accessToken: string,
   refreshToken: string
 ) {
-  const isProduction = process.env.RUNTIME_ENV === "production";
+  const isProduction =
+    process.env.NODE_ENV === "production" ||
+    process.env.RUNTIME_ENV === "production";
 
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
@@ -36,10 +38,9 @@ export function setTokens(
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? "none" : "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 }
-
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
