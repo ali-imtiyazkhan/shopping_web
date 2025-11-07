@@ -14,11 +14,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
-import { Address, useAddressStore } from "@/store/useAddressStore";
-import { useOrderStore } from "@/store/useOrderStore";
+} from "../../components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
+import { useToast } from "../../hooks/use-toast";
+import { Address, useAddressStore } from "../../store/useAddressStore";
+import { useOrderStore } from "../../store/useOrderStore";
 import { useEffect, useState } from "react";
 
 const initialAddressFormState = {
