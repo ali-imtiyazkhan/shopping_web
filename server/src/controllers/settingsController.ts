@@ -47,8 +47,8 @@ export const addFeatureBanners = async (
     );
     
     sendResponse(res, 201, true, "Feature banners added successfully", banners);
-  } catch (e) {
-    console.error(e);
+  } catch (e: any) {
+    console.error("Banner Upload Error:", e);
     // Even on error, try to clean up files
     const files = req.files as Express.Multer.File[];
     if (files && files.length > 0) {
@@ -60,7 +60,7 @@ export const addFeatureBanners = async (
         })
       );
     }
-    sendError(res, 500, "Failed to add feature banners");
+    sendError(res, 500, `Failed to add feature banners: ${e.message || "Unknown error"}`);
   }
 };
 

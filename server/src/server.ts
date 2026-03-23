@@ -16,6 +16,12 @@ import { sendError } from "./utils/response";
 const app = express();
 const PORT = process.env.PORT || 3002;
 
+// Ensure uploads directory exists
+import fs from "fs";
+if (!fs.existsSync("uploads")) {
+  fs.mkdirSync("uploads");
+}
+
 const corsOptions = {
   origin: [
     process.env.CLIENT_URL || "http://localhost:3000",
