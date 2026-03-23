@@ -14,8 +14,7 @@ const publicRoutes = [
 const userRoutes = ["/home", "/cart", "/checkout", "/account"];
 const superAdminRoutes = ["/super-admin", "/super-admin/:path*"];
 
-const BACKEND_URL =
-  "https://shopping-web-3jr0.onrender.com/api";
+const BACKEND_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3002") + "/api";
 
 export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("accessToken")?.value;
@@ -39,11 +38,13 @@ export async function middleware(request: NextRequest) {
     const { role } = payload as { role: string };
 
 
-    if (role === "SUPER_ADMIN" && userRoutes.some((r) => pathname.startsWith(r))) {
+    const isAdmin = role === "SUPER_ADMIN" || role === "ADMIN";
+
+    if (isAdmin && userRoutes.some((r) => pathname.startsWith(r))) {
       return NextResponse.redirect(new URL("/super-admin", request.url));
     }
 
-    if (role !== "SUPER_ADMIN" && superAdminRoutes.some((r) => pathname.startsWith(r))) {
+    if (!isAdmin && superAdminRoutes.some((r) => pathname.startsWith(r))) {
       return NextResponse.redirect(new URL("/home", request.url));
     }
 
@@ -51,7 +52,7 @@ export async function middleware(request: NextRequest) {
   } catch (err) {
     console.error("Token expired or invalid:", err);
 
-    // ✅ 3. Attempt to refresh access token
+    // Attempt to refresh access token
     try {
       const refreshResponse = await fetch(`${BACKEND_URL}/auth/refresh-token`, {
         method: "POST",
@@ -67,7 +68,7 @@ export async function middleware(request: NextRequest) {
       console.error("Refresh token failed:", refreshErr);
     }
 
-    // ✅ 4. If refresh fails — clear cookies and redirect to login
+    // If refresh fails — clear cookies and redirect to login
     const response = NextResponse.redirect(new URL("/auth/login", request.url));
     response.cookies.delete("accessToken");
     response.cookies.delete("refreshToken");
@@ -75,7 +76,7 @@ export async function middleware(request: NextRequest) {
   }
 }
 
-// ✅ Middleware runs on all non-static, non-API routes
+// Middleware runs on all non-static, non-API routes
 export const config = {
   matcher: [
     "/((?!api|_next/static|_next/image|favicon.ico|manifest.json).*)",

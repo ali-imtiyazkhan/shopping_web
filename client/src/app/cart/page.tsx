@@ -42,16 +42,19 @@ function UserCartPage() {
     0
   );
 
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push("/auth/login");
+    }
+  }, [user, isLoading, router]);
+
   if (isLoading) return (
     <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-[10px] tracking-[0.5em] animate-pulse uppercase">Refreshing your bag...</div>
     </div>
   );
 
-  if (!user) {
-    router.push("/auth/login");
-    return null;
-  }
+  if (!user) return null;
 
   return (
     <div className="min-h-screen bg-background pt-32 pb-20">

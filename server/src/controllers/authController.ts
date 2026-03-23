@@ -92,14 +92,25 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const validatedData = loginSchema.parse(req.body);
     const { email, password } = validatedData;
 
+    console.log(`Login attempt for email: ${email}`);
     const user = await prisma.user.findUnique({
       where: { email },
     });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user) {
+      console.log(`Login failed: User with email ${email} not found.`);
       sendError(res, 401, "Invalid credentials");
       return;
     }
+
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
+      console.log(`Login failed: Password mismatch for user ${email}.`);
+      sendError(res, 401, "Invalid credentials");
+      return;
+    }
+
+    console.log(`Login successful for user: ${email} (Role: ${user.role})`);
 
     const { accessToken, refreshToken } = generateToken(
       user.id,
@@ -159,6 +170,13 @@ export const refreshAccessToken = async (
     console.error(error);
     sendError(res, 500, "Refresh token error");
   }
+};
+
+export const checkAuth = async (
+  req: any,
+  res: Response
+): Promise<void> => {
+  sendResponse(res, 200, true, "Authenticated", { user: req.user });
 };
 
 export const logout = async (req: Request, res: Response): Promise<void> => {

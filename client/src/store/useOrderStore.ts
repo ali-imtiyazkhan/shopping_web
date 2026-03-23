@@ -95,7 +95,7 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
         { withCredentials: true }
       );
       set({ isLoading: false });
-      return response.data.id;
+      return response.data.data.id;
     } catch (error) {
       set({ error: "Failed to create paypal order", isLoading: false });
       return null;
@@ -110,7 +110,7 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
         { withCredentials: true }
       );
       set({ isLoading: false, isPaymentProcessing: false });
-      return response.data;
+      return response.data.data;
     } catch (error) {
       set({
         error: "Failed to capture paypal order",
@@ -130,10 +130,10 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
       );
       set({
         isLoading: false,
-        currentOrder: response.data,
+        currentOrder: response.data.data,
         isPaymentProcessing: false,
       });
-      return response.data;
+      return response.data.data;
     } catch (error) {
       set({
         error: "Failed to capture paypal order",
@@ -182,8 +182,8 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
         `${API_ROUTES.ORDER}/get-all-orders-for-admin`,
         { withCredentials: true }
       );
-      set({ isLoading: false, adminOrders: response.data });
-      return response.data;
+      set({ isLoading: false, adminOrders: response.data.data });
+      return response.data.data;
     } catch (error) {
       set({ error: "Failed to fetch all orders for admin", isLoading: false });
       return null;
@@ -196,8 +196,8 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
         `${API_ROUTES.ORDER}/get-order-by-user-id`,
         { withCredentials: true }
       );
-      set({ isLoading: false, userOrders: response.data });
-      return response.data;
+      set({ isLoading: false, userOrders: response.data.data });
+      return response.data.data;
     } catch (error) {
       set({ error: "Failed to fetch all orders for admin", isLoading: false });
       return null;
@@ -211,8 +211,8 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
         `${API_ROUTES.ORDER}/get-single-order/${orderId}`,
         { withCredentials: true }
       );
-      set({ isLoading: false, currentOrder: response.data });
-      return response.data;
+      set({ isLoading: false, currentOrder: response.data.data });
+      return response.data.data;
     } catch (error) {
       set({ error: "Failed to fetch all orders for admin", isLoading: false });
       return null;

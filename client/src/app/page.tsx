@@ -15,7 +15,7 @@ const collections = [
   {
     title: "ESSENTIAL LINENS",
     subtitle: "Breathable ivory fabrics for the modern nomad.",
-    image: "https://images.unsplash.com/photo-1516257984877-a03a80479974?q=80&w=1974&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1549037173-e3b717902c57?q=80&w=2070&auto=format&fit=crop",
   },
 ];
 
@@ -30,13 +30,13 @@ function HomePage() {
   }, [fetchBanners, fetchFeaturedProducts]);
 
   useEffect(() => {
-    if (banners.length > 0) {
+    if (banners?.length > 0) {
       const bannerTimer = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % banners.length);
+        setCurrentSlide((prev) => (prev + 1) % (banners?.length || 1));
       }, 6000);
       return () => clearInterval(bannerTimer);
     }
-  }, [banners.length]);
+  }, [banners?.length]);
 
   return (
     <div className="min-h-screen bg-background selection:bg-primary/30">
@@ -86,9 +86,9 @@ function HomePage() {
         ))}
 
         {/* Banner Navigation Dots */}
-        {banners.length > 1 && (
+        {banners?.length > 1 && (
           <div className="absolute bottom-12 right-12 flex space-x-3">
-            {banners.map((_, index) => (
+            {banners?.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
