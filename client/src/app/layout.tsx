@@ -19,6 +19,9 @@ const jost = Jost({
 export const metadata: Metadata = {
   title: "VOREN | Premium Minimalist Menswear",
   description: "High-end, luxury menswear designed with a minimalist aesthetic.",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
