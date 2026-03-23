@@ -1,4 +1,4 @@
-import expess from "express";
+import express from "express";
 import { authenticateJwt, isSuperAdmin } from "../middleware/authMiddleware";
 import { upload } from "../middleware/uploadMiddleware";
 import {
@@ -10,7 +10,7 @@ import {
   getProductsForClient,
 } from "../controllers/productController";
 
-const router = expess.Router();
+const router = express.Router();
 
 router.post(
   "/create-new-product",

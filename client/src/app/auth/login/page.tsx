@@ -1,8 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import banner from "../../../../public/images/banner2.jpg";
-import logo from "../../../../public/images/logo1.png";
 import { Label } from "../../../components/ui/label";
 import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
@@ -46,71 +43,101 @@ function LoginPage() {
     const success = await login(formData.email, formData.password);
     if (success) {
       toast({
-        title: "Login Successfull!",
+        title: "Welcome back to VOREN.",
       });
       const user = useAuthStore.getState().user;
       if (user?.role === "SUPER_ADMIN") router.push("/super-admin");
-      else router.push("/home");
+      else router.push("/");
     }
   };
+
   return (
-    <div className="min-h-screen bg-[#fff6f4] flex">
-      <div className="hidden lg:block w-1/2 bg-[#ffede1] relative overflow-hidden">
-        <Image
-          src={banner}
-          alt="Register"
-          fill
-          style={{ objectFit: "cover", objectPosition: "center" }}
-          priority
+    <div className="min-h-screen bg-background flex flex-col lg:flex-row">
+      {/* Editorial Image Side */}
+      <div className="hidden lg:block lg:w-1/2 relative overflow-hidden group">
+        <div className="absolute inset-0 bg-black/40 z-10 transition-colors group-hover:bg-black/20" />
+        <img
+          src="https://images.unsplash.com/photo-1488161628813-04466f872be2?q=80&w=1964&auto=format&fit=crop"
+          alt="VOREN Portrait"
+          className="w-full h-full object-cover grayscale-[0.5] transition-transform duration-[10s] group-hover:scale-110"
         />
+        <div className="absolute bottom-20 left-20 z-20 space-y-4">
+          <span className="text-primary text-[10px] tracking-[0.5em] uppercase">VOREN IDENTITY</span>
+          <h2 className="text-4xl font-serif text-white italic">REFINEMENT<br />DEFINED.</h2>
+        </div>
       </div>
-      <div className="w-full lg:w-1/2 flex flex-col p-8 lg:p-16 justify-center">
-        <div className="max-w-md w-full mx-auto">
-          <div className="flex justify-center">
-            <Image src={logo} width={200} height={50} alt="Logo" />
+
+      {/* Form Side */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 lg:p-24">
+        <div className="max-w-md w-full space-y-12">
+          <div className="text-center space-y-4">
+            <h1 className="text-3xl tracking-[0.4em] font-serif uppercase text-foreground">VOREN</h1>
+            <p className="text-[10px] tracking-[0.3em] uppercase text-foreground/40 font-light">Access your digital archive</p>
           </div>
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <div className="space-y-1">
-              <Label htmlFor="name">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                className="bg-[#ffede1]"
-                placeholder="Enter your email"
-                required
-                value={formData.email}
-                onChange={handleOnChange}
-              />
+
+          <form className="space-y-8" onSubmit={handleSubmit}>
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <Label className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 ml-1">Email Protocol</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  className="bg-transparent border-b border-border py-6 rounded-none focus-visible:ring-0 focus-visible:border-primary transition-colors text-sm tracking-widest"
+                  placeholder="EX: ARCHIVE@VOREN.COM"
+                  required
+                  value={formData.email}
+                  onChange={handleOnChange}
+                />
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center group">
+                  <Label className="text-[10px] tracking-[0.3em] uppercase text-foreground/50 ml-1">Secret Key</Label>
+                  <Link href="#" className="text-[9px] tracking-widest text-foreground/30 hover:text-primary transition-colors uppercase">Forgot?</Link>
+                </div>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  className="bg-transparent border-b border-border py-6 rounded-none focus-visible:ring-0 focus-visible:border-primary transition-colors text-sm tracking-widest"
+                  placeholder="••••••••"
+                  required
+                  value={formData.password}
+                  onChange={handleOnChange}
+                />
+              </div>
             </div>
-            <div className="space-y-1">
-              <Label htmlFor="name">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                className="bg-[#ffede1]"
-                placeholder="Enter your password"
-                required
-                value={formData.password}
-                onChange={handleOnChange}
-              />
-            </div>
-            <Button
-              type="submit"
-              className="w-full bg-black text-white hover:bg-black transition-colors"
-            >
-              LOGIN
-            </Button>
-            <p className="text-center text-[#3f3d56] text-sm">
-              New here{" "}
-              <Link
-                href={"/auth/register"}
-                className="text-[#000] hover:underline font-bold"
+
+            <div className="space-y-6">
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full h-14 bg-foreground text-background hover:bg-primary transition-all rounded-none text-[10px] tracking-[0.4em] uppercase font-bold"
               >
-                Sign up
-              </Link>
-            </p>
+                {isLoading ? "Authenticating..." : "Enter the Archive"}
+              </Button>
+              
+              <div className="relative py-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-border/50"></div>
+                </div>
+                <div className="relative flex justify-center text-[9px] tracking-[0.4em] uppercase">
+                  <span className="bg-background px-4 text-foreground/30 font-light">OR</span>
+                </div>
+              </div>
+
+              <div className="text-center space-y-4">
+                <p className="text-[10px] tracking-widest text-foreground/40 uppercase">
+                  Not a collector yet?
+                </p>
+                <Link
+                  href={"/auth/register"}
+                  className="inline-block text-[10px] tracking-[0.3em] uppercase text-primary hover:text-foreground transition-colors font-bold border-b border-primary/30 pb-1"
+                >
+                  Create an Profile
+                </Link>
+              </div>
+            </div>
           </form>
         </div>
       </div>

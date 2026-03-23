@@ -71,18 +71,18 @@ function HomePage() {
             </div>
             <div className="relative h-full container mx-auto px-4 flex items-center">
               <div className="text-white space-y-6">
-                <span className="text-sm uppercase tracking-wider">
-                  I AM JOHN
+                <span className="text-sm uppercase tracking-[0.4em] font-medium text-primary">
+                  VOREN ARCHIVE
                 </span>
-                <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
-                  BEST SELLING
+                <h1 className="text-5xl lg:text-7xl font-serif leading-tight uppercase tracking-tighter">
+                  The New Standard
                   <br />
-                  E-COMMERCE WEBSITE
+                  of Minimalism
                 </h1>
-                <p className="text-lg">
-                  A Creative, Flexible , Clean, Easy to use and
+                <p className="text-lg font-light tracking-widest opacity-80 italic font-serif text-white/90">
+                  Curated essentials for the modern man. 
                   <br />
-                  High Performance E-Commerce Theme
+                  Refinement in every stitch.
                 </p>
                 <Button className="bg-white text-black hover:bg-gray-100 px-8 py-6 text-lg">
                   SHOP NOW
@@ -148,8 +148,8 @@ function HomePage() {
           <h2 className="text-center text-3xl font-semibold mb-2">
             NEW ARRIVALS
           </h2>
-          <p className="text-center text-gray-500 mb-8">
-            Shop our new arrivals from established brands
+          <p className="text-center text-gray-500 mb-8 uppercase text-[10px] tracking-[0.3em]">
+            Shop our new arrivals from the latest VOREN archive
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {featuredProducts.map((productItem, index) => (

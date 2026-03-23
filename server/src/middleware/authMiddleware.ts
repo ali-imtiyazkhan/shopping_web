@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { jwtVerify, JWTPayload } from "jose";
+import jwt from "jsonwebtoken";
 
 export interface AuthenticatedRequest extends Request {
   user?: {
@@ -16,33 +16,27 @@ export const authenticateJwt = (
 ) => {
   const accessToken = req.cookies.accessToken;
   if (!accessToken) {
-    res
-      .status(401)
-      .json({ success: false, error: "Access token is not present" });
+    res.status(401).json({ success: false, error: "Authentication required" });
     return;
   }
 
-  jwtVerify(accessToken, new TextEncoder().encode(process.env.JWT_SECRET))
-    .then((res) => {
-      const payload = res.payload as JWTPayload & {
-        userId: string;
-        email: string;
-        role: string;
-      };
+  try {
+    const decoded = jwt.verify(accessToken, process.env.JWT_SECRET!) as {
+      userId: string;
+      email: string;
+      role: string;
+    };
 
-      req.user = {
-        userId: payload.userId,
-        email: payload.email,
-        role: payload.role,
-      };
-      next();
-    })
-    .catch((e) => {
-      console.error(e);
-      res
-        .status(401)
-        .json({ success: false, error: "Access token is not present" });
-    });
+    req.user = {
+      userId: decoded.userId,
+      email: decoded.email,
+      role: decoded.role,
+    };
+    next();
+  } catch (error) {
+    console.error("JWT Verification Error:", error);
+    res.status(401).json({ success: false, error: "Invalid or expired token" });
+  }
 };
 
 export const isSuperAdmin = (

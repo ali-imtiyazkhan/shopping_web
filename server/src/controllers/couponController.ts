@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "../middleware/authMiddleware";
 import { prisma } from "../server";
+import { sendResponse, sendError } from "../utils/response";
 
 export const createCoupon = async (
   req: AuthenticatedRequest,
@@ -20,17 +21,10 @@ export const createCoupon = async (
       },
     });
 
-    res.status(201).json({
-      success: true,
-      message: "Coupon created successfully!",
-      coupon: newlyCreatedCoupon,
-    });
+    sendResponse(res, 201, true, "Coupon created successfully!", { coupon: newlyCreatedCoupon });
   } catch (e) {
     console.error(e);
-    res.status(500).json({
-      success: false,
-      message: "Failed to created coupon",
-    });
+    sendError(res, 500, "Failed to create coupon");
   }
 };
 
@@ -42,17 +36,10 @@ export const fetchAllCoupons = async (
     const fetchAllCouponsList = await prisma.coupon.findMany({
       orderBy: { createdAt: "asc" },
     });
-    res.status(201).json({
-      success: true,
-      message: "Coupon created successfully!",
-      couponList: fetchAllCouponsList,
-    });
+    sendResponse(res, 200, true, "Coupons fetched successfully!", { couponList: fetchAllCouponsList });
   } catch (e) {
     console.error(e);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch coupon list",
-    });
+    sendError(res, 500, "Failed to fetch coupon list");
   }
 };
 
@@ -67,16 +54,9 @@ export const deleteCoupon = async (
       where: { id },
     });
 
-    res.status(201).json({
-      success: true,
-      message: "Coupon deleted successfully!",
-      id: id,
-    });
+    sendResponse(res, 200, true, "Coupon deleted successfully!", { id });
   } catch (e) {
     console.error(e);
-    res.status(500).json({
-      success: false,
-      message: "Failed to delete coupon",
-    });
+    sendError(res, 500, "Failed to delete coupon");
   }
 };

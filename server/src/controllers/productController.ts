@@ -2,14 +2,16 @@ import { Response } from "express";
 import { AuthenticatedRequest } from "../middleware/authMiddleware";
 import cloudinary from "../config/cloudinary";
 import { prisma } from "../server";
-import fs from "fs";
+import fs from "fs/promises";
 import { Prisma } from "@prisma/client";
+import { sendResponse, sendError } from "../utils/response";
 
 //create a product
 export const createProduct = async (
   req: AuthenticatedRequest,
   res: Response
 ): Promise<void> => {
+  const files = req.files as Express.Multer.File[];
   try {
     const {
       name,
@@ -23,7 +25,10 @@ export const createProduct = async (
       stock,
     } = req.body;
 
-    const files = req.files as Express.Multer.File[];
+    if (!files || files.length === 0) {
+      sendError(res, 400, "Please upload at least one image");
+      return;
+    }
 
     //upload all images to cloudinary
     const uploadPromises = files.map((file) =>
@@ -42,8 +47,8 @@ export const createProduct = async (
         category,
         description,
         gender,
-        sizes: sizes.split(","),
-        colors: colors.split(","),
+        sizes: sizes ? sizes.split(",") : [],
+        colors: colors ? colors.split(",") : [],
         price: parseFloat(price),
         stock: parseInt(stock),
         images: imageUrls,
@@ -52,12 +57,31 @@ export const createProduct = async (
       },
     });
 
-    //clean the uploaded files
-    files.forEach((file) => fs.unlinkSync(file.path));
-    res.status(201).json(newlyCreatedProduct);
+    //clean the uploaded files asynchronously with error handling
+    await Promise.all(
+      files.map(async (file) => {
+        try {
+          await fs.unlink(file.path);
+        } catch (e) {
+          console.error(`Failed to delete local file: ${file.path}`, e);
+        }
+      })
+    );
+    
+    sendResponse(res, 201, true, "Product created successfully", newlyCreatedProduct);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ success: false, message: "Some error occured!" });
+    // Even on error, try to clean up files
+    if (files && files.length > 0) {
+      await Promise.all(
+        files.map(async (file) => {
+          try {
+            await fs.unlink(file.path);
+          } catch (err) {}
+        })
+      );
+    }
+    sendError(res, 500, "Failed to create product");
   }
 };
 
@@ -67,11 +91,13 @@ export const fetchAllProductsForAdmin = async (
   res: Response
 ): Promise<void> => {
   try {
-    const fetchAllProducts = await prisma.product.findMany();
-    res.status(200).json(fetchAllProducts);
+    const products = await prisma.product.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+    sendResponse(res, 200, true, "Products fetched successfully", products);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ success: false, message: "Some error occured!" });
+    sendError(res, 500, "Failed to fetch products");
   }
 };
 
@@ -87,19 +113,18 @@ export const getProductByID = async (
     });
 
     if (!product) {
-      res.status(404).json({
-        success: false,
-        message: "Product not found",
-      });
+      sendError(res, 404, "Product not found");
+      return;
     }
 
-    res.status(200).json(product);
+    sendResponse(res, 200, true, "Product fetched successfully", product);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ success: false, message: "Some error occured!" });
+    sendError(res, 500, "Failed to fetch product");
   }
 };
-//update  a product (admin)
+
+//update a product (admin)
 export const updateProduct = async (
   req: AuthenticatedRequest,
   res: Response
@@ -119,11 +144,13 @@ export const updateProduct = async (
       rating,
     } = req.body;
 
-    console.log(req.body, "req.body");
+    const existingProduct = await prisma.product.findUnique({ where: { id } });
+    if (!existingProduct) {
+      sendError(res, 404, "Product not found");
+      return;
+    }
 
-    //homework -> you can also implement image update func
-
-    const product = await prisma.product.update({
+    const updatedProduct = await prisma.product.update({
       where: { id },
       data: {
         name,
@@ -131,20 +158,21 @@ export const updateProduct = async (
         category,
         description,
         gender,
-        sizes: sizes.split(","),
-        colors: colors.split(","),
-        price: parseFloat(price),
-        stock: parseInt(stock),
-        rating: parseInt(rating),
+        sizes: sizes ? sizes.split(",") : undefined,
+        colors: colors ? colors.split(",") : undefined,
+        price: price ? parseFloat(price) : undefined,
+        stock: stock ? parseInt(stock) : undefined,
+        rating: rating ? parseInt(rating) : undefined,
       },
     });
 
-    res.status(200).json(product);
+    sendResponse(res, 200, true, "Product updated successfully", updatedProduct);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ success: false, message: "Some error occured!" });
+    sendError(res, 500, "Failed to update product");
   }
 };
+
 //delete a product (admin)
 export const deleteProduct = async (
   req: AuthenticatedRequest,
@@ -152,25 +180,28 @@ export const deleteProduct = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    await prisma.product.delete({ where: { id } });
+    const product = await prisma.product.findUnique({ where: { id } });
+    if (!product) {
+       sendError(res, 404, "Product not found");
+       return;
+    }
 
-    res
-      .status(200)
-      .json({ success: true, message: "Product deleted successfully" });
+    await prisma.product.delete({ where: { id } });
+    sendResponse(res, 200, true, "Product deleted successfully");
   } catch (e) {
     console.error(e);
-    res.status(500).json({ success: false, message: "Some error occured!" });
+    sendError(res, 500, "Failed to delete product");
   }
 };
-//fetch products with filter (client)
 
+//fetch products with filter (client)
 export const getProductsForClient = async (
   req: AuthenticatedRequest,
   res: Response
 ): Promise<void> => {
   try {
     const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
+    const limit = parseInt(req.query.limit as string) || 12;
     const categories = ((req.query.categories as string) || "")
       .split(",")
       .filter(Boolean);
@@ -242,15 +273,7 @@ export const getProductsForClient = async (
       prisma.product.count({ where }),
     ]);
 
-    console.log(
-      Math.ceil(total / limit),
-      total,
-      limit,
-      "Math.ceil(total / limit)"
-    );
-
-    res.status(200).json({
-      success: true,
+    sendResponse(res, 200, true, "Products fetched successfully", {
       products,
       currentPage: page,
       totalPages: Math.ceil(total / limit),
@@ -258,6 +281,6 @@ export const getProductsForClient = async (
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Some error occured!" });
+    sendError(res, 500, "Failed to fetch products");
   }
 };

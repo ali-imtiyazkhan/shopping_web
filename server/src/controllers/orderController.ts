@@ -3,11 +3,10 @@ import { AuthenticatedRequest } from "../middleware/authMiddleware";
 import { NextFunction, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { prisma } from "../server";
+import { sendResponse, sendError } from "../utils/response";
 
-const PAYPAL_CLIENT_ID =
-  "AYYtmQuBVHm_q4fO-nRv84xIKhQk1-BdhSLckYRxcBJLhxI5EcxafPKdkvKpqLDP-pNLNXalxvlUSgZE";
-const PAYPAL_CLIENT_SECRET =
-  "EH6X0HMUA-0gB0Z1m8fq_p-YTy1dDLZT7Zs-Q8VcuX33xJN9RID883YWb38JSMwz88t2grJNwKR5ct_W";
+const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
+const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET;
 
 async function getPaypalAccessToken() {
   const response = await axios.post(
@@ -28,8 +27,7 @@ async function getPaypalAccessToken() {
 
 export const createPaypalOrder = async (
   req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
+  res: Response
 ): Promise<void> => {
   try {
     const { items, total } = req.body;
@@ -82,19 +80,16 @@ export const createPaypalOrder = async (
       }
     );
 
-    res.status(200).json(response.data);
+    sendResponse(res, 200, true, "PayPal order created", response.data);
   } catch (e) {
-    res.status(500).json({
-      success: false,
-      message: "Unexpected error occured!",
-    });
+    console.error(e);
+    sendError(res, 500, "Failed to create PayPal order");
   }
 };
 
 export const capturePaypalOrder = async (
   req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
+  res: Response
 ): Promise<void> => {
   try {
     const { orderId } = req.body;
@@ -110,40 +105,28 @@ export const capturePaypalOrder = async (
         },
       }
     );
-    res.status(200).json(response.data);
+    sendResponse(res, 200, true, "Payment captured successfully", response.data);
   } catch (e) {
-    res.status(500).json({
-      success: false,
-      message: "Unexpected error occured!",
-    });
+    console.error(e);
+    sendError(res, 500, "Failed to capture PayPal payment");
   }
 };
 
 export const createFinalOrder = async (
   req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
+  res: Response
 ): Promise<void> => {
   try {
     const { items, addressId, couponId, total, paymentId } = req.body;
     const userId = req.user?.userId;
 
-    console.log(items, "itemsitemsitems");
-
     if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: "Unauthenticated user",
-      });
-
+      sendError(res, 401, "Unauthenticated user");
       return;
     }
 
-    //start our transaction
-
-    const order = await prisma.$transaction(async (prisma) => {
-      //create new order
-      const newOrder = await prisma.order.create({
+    const order = await prisma.$transaction(async (tx) => {
+      const newOrder = await tx.order.create({
         data: {
           userId,
           addressId,
@@ -164,13 +147,11 @@ export const createFinalOrder = async (
             })),
           },
         },
-        include: {
-          items: true,
-        },
+        include: { items: true },
       });
 
       for (const item of items) {
-        await prisma.product.update({
+        await tx.product.update({
           where: { id: item.productId },
           data: {
             stock: { decrement: item.quantity },
@@ -179,18 +160,16 @@ export const createFinalOrder = async (
         });
       }
 
-      await prisma.cartItem.deleteMany({
-        where: {
-          cart: { userId },
-        },
+      await tx.cartItem.deleteMany({
+        where: { cart: { userId } },
       });
 
-      await prisma.cart.delete({
+      await tx.cart.delete({
         where: { userId },
       });
 
       if (couponId) {
-        await prisma.coupon.update({
+        await tx.coupon.update({
           where: { id: couponId },
           data: { usageCount: { increment: 1 } },
         });
@@ -199,40 +178,28 @@ export const createFinalOrder = async (
       return newOrder;
     });
 
-    res.status(201).json(order);
+    sendResponse(res, 201, true, "Order finalized successfully", order);
   } catch (e) {
-    console.log(e, "createFinalOrder");
-
-    res.status(500).json({
-      success: false,
-      message: "Unexpected error occured!",
-    });
+    console.error("createFinalOrder Error:", e);
+    sendError(res, 500, "Failed to finalize order");
   }
 };
 
 export const getOrder = async (
   req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
+  res: Response
 ): Promise<void> => {
   try {
     const userId = req.user?.userId;
     const { orderId } = req.params;
 
     if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: "Unauthenticated user",
-      });
-
+      sendError(res, 401, "Unauthenticated user");
       return;
     }
 
     const order = await prisma.order.findFirst({
-      where: {
-        id: orderId,
-        userId,
-      },
+      where: { id: orderId, userId },
       include: {
         items: true,
         address: true,
@@ -240,72 +207,43 @@ export const getOrder = async (
       },
     });
 
-    res.status(200).json(order);
+    if (!order) {
+      sendError(res, 404, "Order not found");
+      return;
+    }
+
+    sendResponse(res, 200, true, "Order fetched successfully", order);
   } catch (e) {
-    res.status(500).json({
-      success: false,
-      message: "Unexpected error occured!",
-    });
+    console.error(e);
+    sendError(res, 500, "Some error occurred!");
   }
 };
 
 export const updateOrderStatus = async (
   req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
+  res: Response
 ): Promise<void> => {
   try {
-    const userId = req.user?.userId;
     const { orderId } = req.params;
     const { status } = req.body;
 
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: "Unauthenticated user",
-      });
-
-      return;
-    }
-
-    await prisma.order.updateMany({
-      where: {
-        id: orderId,
-      },
-      data: {
-        status,
-      },
+    await prisma.order.update({
+      where: { id: orderId },
+      data: { status },
     });
 
-    res.status(200).json({
-      success: true,
-      message: "Order status updated successfully",
-    });
+    sendResponse(res, 200, true, "Order status updated successfully");
   } catch (e) {
-    res.status(500).json({
-      success: false,
-      message: "Unexpected error occured!",
-    });
+    console.error(e);
+    sendError(res, 500, "Failed to update order status");
   }
 };
 
 export const getAllOrdersForAdmin = async (
   req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
+  res: Response
 ): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: "Unauthenticated user",
-      });
-
-      return;
-    }
-
     const orders = await prisma.order.findMany({
       include: {
         items: true,
@@ -318,52 +256,39 @@ export const getAllOrdersForAdmin = async (
           },
         },
       },
+      orderBy: { createdAt: "desc" },
     });
 
-    res.status(200).json(orders);
+    sendResponse(res, 200, true, "All orders fetched successfully", orders);
   } catch (e) {
-    res.status(500).json({
-      success: false,
-      message: "Unexpected error occured!",
-    });
+    console.error(e);
+    sendError(res, 500, "Failed to fetch admin orders");
   }
 };
 
 export const getOrdersByUserId = async (
   req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
+  res: Response
 ): Promise<void> => {
   try {
     const userId = req.user?.userId;
-
     if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: "Unauthenticated user",
-      });
-
+      sendError(res, 401, "Unauthenticated user");
       return;
     }
 
     const orders = await prisma.order.findMany({
-      where: {
-        userId: userId,
-      },
+      where: { userId },
       include: {
         items: true,
         address: true,
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
     });
 
-    res.json(orders);
+    sendResponse(res, 200, true, "User orders fetched successfully", orders);
   } catch (e) {
-    res.status(500).json({
-      success: false,
-      message: "Unexpected error occured!",
-    });
+    console.error(e);
+    sendError(res, 500, "Failed to fetch user orders");
   }
 };

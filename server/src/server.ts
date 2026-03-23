@@ -1,5 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import dotenv from "dotenv";
+dotenv.config();
+
+import { PrismaClient } from "@prisma/client";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -10,8 +12,7 @@ import settingsRoutes from "./routes/settingRoutes";
 import cartRoutes from "./routes/cartRoutes";
 import addressRoutes from "./routes/addressRoutes";
 import orderRoutes from "./routes/orderRoutes";
-
-dotenv.config();
+import { sendError } from "./utils/response";
 const app = express();
 const PORT = process.env.PORT || 3002;
 
@@ -38,6 +39,12 @@ app.use("/api/order", orderRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello from E-Commerce backend");
+});
+
+
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error("Global Error Handler:", err);
+  sendError(res, err.status || 500, err.message || "An unexpected error occurred");
 });
 
 app.listen(PORT, () => {

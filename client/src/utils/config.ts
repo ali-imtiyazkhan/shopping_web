@@ -1,21 +1,19 @@
 export const categories = [
-  "Fashion",
-  "Electronics",
-  "Hand Bag",
-  "Shoes",
-  "Wallet",
-  "Sunglass",
-  "Cap",
+  "Outerwear",
+  "Knitwear",
+  "Shirts",
+  "Trousers",
+  "Footwear",
+  "Accessories",
+  "Fragrance",
 ];
-export const sizes = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
+export const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
 export const colors = [
-  { name: "Navy", class: "bg-[#0F172A]" },
-  { name: "Yellow", class: "bg-[#FCD34D]" },
-  { name: "White", class: "bg-white border" },
-  { name: "Orange", class: "bg-[#FB923C]" },
-  { name: "Green", class: "bg-[#22C55E]" },
-  { name: "Pink", class: "bg-[#EC4899]" },
-  { name: "Cyan", class: "bg-[#06B6D4]" },
-  { name: "Blue", class: "bg-[#3B82F6]" },
+  { name: "Obsidian", class: "bg-[#0A0A0B]" },
+  { name: "Ivory", class: "bg-[#FDFCFB] border" },
+  { name: "Gold", class: "bg-[#C5A059]" },
+  { name: "Slate", class: "bg-[#4A4A4A]" },
+  { name: "Charcoal", class: "bg-[#2D2D2D]" },
+  { name: "Oatmeal", class: "bg-[#E5E0D8]" },
 ];
-export const brands = ["Nike", "Adidas", "Puma", "Reebok", "Under Armour"];
+export const brands = ["VOREN"];

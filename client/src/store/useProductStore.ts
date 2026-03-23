@@ -47,7 +47,7 @@ interface ProductState {
 
 export const useProductStore = create<ProductState>((set, get) => ({
   products: [],
-  isLoading: true,
+  isLoading: false,
   error: null,
   currentPage: 1,
   totalPages: 1,
