@@ -1,4 +1,5 @@
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3002";
+const rawBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://shopping-web-3jr0.onrender.com";
+export const API_BASE_URL = rawBaseUrl.endsWith("/") ? rawBaseUrl.slice(0, -1) : rawBaseUrl;
 
 export const API_ROUTES = {
   AUTH: `${API_BASE_URL}/api/auth`,

@@ -14,7 +14,9 @@ const publicRoutes = [
 const userRoutes = ["/home", "/cart", "/checkout", "/account"];
 const superAdminRoutes = ["/super-admin", "/super-admin/:path*"];
 
-const BACKEND_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3002") + "/api";
+const rawBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://shopping-web-3jr0.onrender.com";
+const API_BASE_URL = rawBaseUrl.endsWith("/") ? rawBaseUrl.slice(0, -1) : rawBaseUrl;
+const BACKEND_URL = `${API_BASE_URL}/api`;
 
 export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("accessToken")?.value;
