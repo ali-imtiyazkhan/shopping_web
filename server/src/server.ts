@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3002;
 const corsOptions = {
   origin: [
     process.env.CLIENT_URL || "http://localhost:3000",
-    "https://shopping-web-3zrk.vercel.app",
+    "https://voren.vercel.app",
     "http://localhost:3000"
   ],
   credentials: true,
