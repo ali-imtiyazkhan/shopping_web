@@ -36,7 +36,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
       const response = await axios.get(`${API_ROUTES.SETTINGS}/get-banners`, {
         withCredentials: true,
       });
-      set({ banners: response.data.banners, isLoading: false });
+      set({ banners: response.data.data, isLoading: false });
     } catch (e) {
       console.error(e);
       set({ error: "Failed to fetch banners", isLoading: false });
@@ -52,7 +52,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
         }
       );
       set({
-        featuredProducts: response.data.featuredProducts,
+        featuredProducts: response.data.data,
         isLoading: false,
       });
     } catch (e) {

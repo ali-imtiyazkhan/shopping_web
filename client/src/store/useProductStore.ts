@@ -62,7 +62,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
         }
       );
 
-      set({ products: response.data, isLoading: false });
+      set({ products: response.data.data, isLoading: false });
     } catch (e) {
       set({ error: "Failed to fetch product", isLoading: false });
     }
@@ -81,7 +81,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
         }
       );
       set({ isLoading: false });
-      return response.data;
+      return response.data.data;
     } catch (e) {
       set({ error: "Failed to create product", isLoading: false });
     }
@@ -100,7 +100,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
         }
       );
       set({ isLoading: false });
-      return response.data;
+      return response.data.data;
     } catch (e) {
       set({ error: "Failed to create product", isLoading: false });
     }
@@ -112,7 +112,16 @@ export const useProductStore = create<ProductState>((set, get) => ({
         withCredentials: true,
       });
       set({ isLoading: false });
-      return response.data.success;
+      const success = response.data.success;
+      if (success) {
+        set((state) => ({
+          products: state.products.filter((p) => p.id !== id),
+          isLoading: false,
+        }));
+      } else {
+        set({ isLoading: false });
+      }
+      return success;
     } catch (e) {
       set({ error: "Failed to create product", isLoading: false });
     }
@@ -124,7 +133,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
         withCredentials: true,
       });
       set({ isLoading: false });
-      return response.data;
+      return response.data.data;
     } catch (e) {
       set({ error: "Failed to create product", isLoading: false });
       return null;
@@ -149,11 +158,12 @@ export const useProductStore = create<ProductState>((set, get) => ({
         }
       );
 
+      const { products, currentPage, totalPages, totalProducts } = response.data.data;
       set({
-        products: response.data.products,
-        currentPage: response.data.currentPage,
-        totalPages: response.data.totalPages,
-        totalProducts: response.data.totalProducts,
+        products,
+        currentPage,
+        totalPages,
+        totalProducts,
         isLoading: false,
       });
     } catch (e) {

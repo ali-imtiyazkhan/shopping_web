@@ -17,7 +17,7 @@ const app = express();
 const PORT = process.env.PORT || 3002;
 
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://shopping-web-3zrk.vercel.app"],
+  origin: [process.env.CLIENT_URL || "http://localhost:3000"],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -26,6 +26,11 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
+
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url} - Headers:`, req.headers.cookie ? "Cookies present" : "No cookies");
+  next();
+});
 
 export const prisma = new PrismaClient();
 

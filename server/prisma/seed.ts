@@ -8,25 +8,29 @@ async function main() {
   const password = "123456";
   const name = "Super Admin";
 
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   const existingSuperAdmin = await prisma.user.findFirst({
     where: { role: "SUPER_ADMIN" },
   });
 
   if (existingSuperAdmin) {
-    return;
+    await prisma.user.update({
+      where: { id: existingSuperAdmin.id },
+      data: { password: hashedPassword, email: email, name: name },
+    });
+    console.log("Super admin password reset successfully", email);
+  } else {
+    const superAdminUser = await prisma.user.create({
+      data: {
+        email,
+        name,
+        password: hashedPassword,
+        role: "SUPER_ADMIN",
+      },
+    });
+    console.log("Super admin created successfully", superAdminUser.email);
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const superAdminUser = await prisma.user.create({
-    data: {
-      email,
-      name,
-      password: hashedPassword,
-      role: "SUPER_ADMIN",
-    },
-  });
-
-  console.log("Super admin created successfully", superAdminUser.email);
 }
 
 main()

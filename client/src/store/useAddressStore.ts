@@ -37,7 +37,7 @@ export const useAddressStore = create<AddressStore>((set, get) => ({
         withCredentials: true,
       });
 
-      set({ addresses: response.data.address, isLoading: false });
+      set({ addresses: response.data.data.address, isLoading: false });
     } catch (e) {
       set({ isLoading: false, error: "Failed to fetch address" });
     }
@@ -53,7 +53,7 @@ export const useAddressStore = create<AddressStore>((set, get) => ({
         }
       );
 
-      const newAddress = response.data.address;
+      const newAddress = response.data.data.address;
 
       set((state) => ({
         addresses: [newAddress, ...state.addresses],
@@ -76,7 +76,7 @@ export const useAddressStore = create<AddressStore>((set, get) => ({
         }
       );
 
-      const updatedAddress = response.data.address;
+      const updatedAddress = response.data.data.address;
 
       set((state) => ({
         addresses: state.addresses.map((item) =>
@@ -93,7 +93,7 @@ export const useAddressStore = create<AddressStore>((set, get) => ({
   deleteAddress: async (id) => {
     set({ isLoading: true, error: null });
     try {
-      await axios.delete(`${API_ROUTES.ADDRESS}/delete-address/${id}`, {
+      const response = await axios.delete(`${API_ROUTES.ADDRESS}/delete-address/${id}`, {
         withCredentials: true,
       });
 
@@ -102,7 +102,7 @@ export const useAddressStore = create<AddressStore>((set, get) => ({
         isLoading: false,
       }));
 
-      return true;
+      return response.data.success;
     } catch (e) {
       set({ isLoading: false, error: "Failed to fetch address" });
       return false;

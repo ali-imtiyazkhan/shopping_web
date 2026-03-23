@@ -46,7 +46,7 @@ function LoginPage() {
         title: "Welcome back to VOREN.",
       });
       const user = useAuthStore.getState().user;
-      if (user?.role === "SUPER_ADMIN") router.push("/super-admin");
+      if (user?.role === "SUPER_ADMIN" || user?.role === "ADMIN") router.push("/super-admin");
       else router.push("/");
     }
   };

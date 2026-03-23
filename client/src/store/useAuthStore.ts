@@ -7,7 +7,7 @@ type User = {
   id: string;
   name: string | null;
   email: string;
-  role: "USER" | "SUPER_ADMIN";
+  role: "USER" | "ADMIN" | "SUPER_ADMIN";
 };
 
 type AuthStore = {
@@ -45,7 +45,7 @@ export const useAuthStore = create<AuthStore>()(
           });
 
           set({ isLoading: false });
-          return response.data.userId;
+          return response.data.data.userId;
         } catch (error) {
           set({
             isLoading: false,
@@ -65,7 +65,7 @@ export const useAuthStore = create<AuthStore>()(
             password,
           });
 
-          set({ isLoading: false, user: response.data.user });
+          set({ isLoading: false, user: response.data.data.user });
           return true;
         } catch (error) {
           set({

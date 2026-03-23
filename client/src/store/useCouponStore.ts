@@ -34,7 +34,7 @@ export const useCouponStore = create<CouponStore>((set, get) => ({
         `${API_ROUTES.COUPON}/fetch-all-coupons`,
         { withCredentials: true }
       );
-      set({ couponList: response.data.couponList, isLoading: false });
+      set({ couponList: response.data.data.couponList, isLoading: false });
     } catch (e) {
       set({ isLoading: false, error: "Failed to fetch coupons" });
     }
@@ -49,7 +49,7 @@ export const useCouponStore = create<CouponStore>((set, get) => ({
       );
 
       set({ isLoading: false });
-      return response.data.coupon;
+      return response.data.data.coupon;
     } catch (e) {
       set({ isLoading: false, error: "Failed to fetch coupons" });
       return null;
