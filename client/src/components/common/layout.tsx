@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Header from "../user/header";
+import Footer from "../user/footer";
 
 const pathsNotToShowHeaders = ["/auth", "/super-admin"];
 
@@ -13,9 +14,10 @@ function CommonLayout({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       {showHeader && <Header />}
       <main>{children}</main>
+      {showHeader && <Footer />}
     </div>
   );
 }

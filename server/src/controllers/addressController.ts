@@ -1,56 +1,45 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "../middleware/authMiddleware";
 import { prisma } from "../server";
+import { sendResponse, sendError } from "../utils/response";
 
 export const createAddress = async (
   req: AuthenticatedRequest,
   res: Response
 ): Promise<void> => {
-  const userId = req.user?.userId;
-  if (!userId) {
-    res.status(401).json({
-      success: false,
-      message: "Unauthenticated user",
-    });
-    return;
-  }
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      sendError(res, 401, "Unauthenticated user");
+      return;
+    }
 
-  const { name, address, city, country, postalCode, phone, isDefault } =
-    req.body;
+    const { name, address, city, country, postalCode, phone, isDefault } = req.body;
 
-  if (isDefault) {
-    await prisma.address.updateMany({
-      where: { userId },
+    if (isDefault) {
+      await prisma.address.updateMany({
+        where: { userId },
+        data: { isDefault: false },
+      });
+    }
+
+    const newlyCreatedAddress = await prisma.address.create({
       data: {
-        isDefault: false,
+        userId,
+        name,
+        address,
+        city,
+        country,
+        postalCode,
+        phone,
+        isDefault: isDefault || false,
       },
     });
-  }
 
-  const newlyCreatedAddress = await prisma.address.create({
-    data: {
-      userId,
-      name,
-      address,
-      city,
-      country,
-      postalCode,
-      phone,
-      isDefault: isDefault || false,
-    },
-  });
-
-  res.status(201).json({
-    success: true,
-    address: newlyCreatedAddress,
-  });
-
-  try {
+    sendResponse(res, 201, true, "Address created successfully", { address: newlyCreatedAddress });
   } catch (e) {
-    res.status(500).json({
-      success: false,
-      message: "Some error occured",
-    });
+    console.error(e);
+    sendError(res, 500, "Some error occurred");
   }
 };
 
@@ -61,11 +50,7 @@ export const getAddresses = async (
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: "Unauthenticated user",
-      });
-
+      sendError(res, 401, "Unauthenticated user");
       return;
     }
 
@@ -74,15 +59,10 @@ export const getAddresses = async (
       orderBy: { createdAt: "desc" },
     });
 
-    res.status(200).json({
-      success: true,
-      address: fetchAllAddresses,
-    });
+    sendResponse(res, 200, true, "Addresses fetched successfully", { address: fetchAllAddresses });
   } catch (e) {
-    res.status(500).json({
-      success: false,
-      message: "Some error occured",
-    });
+    console.error(e);
+    sendError(res, 500, "Some error occurred");
   }
 };
 
@@ -94,11 +74,7 @@ export const updateAddress = async (
     const userId = req.user?.userId;
     const { id } = req.params;
     if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: "Unauthenticated user",
-      });
-
+      sendError(res, 401, "Unauthenticated user");
       return;
     }
 
@@ -107,23 +83,16 @@ export const updateAddress = async (
     });
 
     if (!existingAddress) {
-      res.status(404).json({
-        success: false,
-        message: "Address not found!",
-      });
-
+      sendError(res, 404, "Address not found!");
       return;
     }
 
-    const { name, address, city, country, postalCode, phone, isDefault } =
-      req.body;
+    const { name, address, city, country, postalCode, phone, isDefault } = req.body;
 
     if (isDefault) {
       await prisma.address.updateMany({
         where: { userId },
-        data: {
-          isDefault: false,
-        },
+        data: { isDefault: false },
       });
     }
 
@@ -140,15 +109,10 @@ export const updateAddress = async (
       },
     });
 
-    res.status(200).json({
-      success: true,
-      address: updatedAddress,
-    });
+    sendResponse(res, 200, true, "Address updated successfully", { address: updatedAddress });
   } catch (e) {
-    res.status(500).json({
-      success: false,
-      message: "Some error occured",
-    });
+    console.error(e);
+    sendError(res, 500, "Some error occurred");
   }
 };
 
@@ -160,11 +124,7 @@ export const deleteAddress = async (
     const { id } = req.params;
     const userId = req.user?.userId;
     if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: "Unauthenticated user",
-      });
-
+      sendError(res, 401, "Unauthenticated user");
       return;
     }
 
@@ -173,11 +133,7 @@ export const deleteAddress = async (
     });
 
     if (!existingAddress) {
-      res.status(404).json({
-        success: false,
-        message: "Address not found!",
-      });
-
+      sendError(res, 404, "Address not found!");
       return;
     }
 
@@ -185,14 +141,9 @@ export const deleteAddress = async (
       where: { id },
     });
 
-    res.status(200).json({
-      success: true,
-      message: "Address deleted successfully!",
-    });
+    sendResponse(res, 200, true, "Address deleted successfully!");
   } catch (e) {
-    res.status(500).json({
-      success: false,
-      message: "Some error occured",
-    });
+    console.error(e);
+    sendError(res, 500, "Some error occurred");
   }
 };

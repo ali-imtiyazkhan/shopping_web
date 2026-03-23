@@ -127,11 +127,11 @@ function Header() {
   };
 
   return (
-    <header className="sticky bg-white  top-0 z-50 shadow-sm">
+    <header className="sticky bg-background/80 backdrop-blur-md top-0 z-50 border-b border-border">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
-          <Link className="text-2xl font-bold" href="/">
-            ECOMMERCE
+          <Link className="text-2xl font-serif tracking-[0.2em]" href="/">
+            VOREN
           </Link>
           <div className="hidden lg:flex items-center space-x-8 flex-1 justify-center">
             <nav className="flex items-center space-x-8">
@@ -189,7 +189,7 @@ function Header() {
               </Button>
               <SheetContent side="left" className="w-80">
                 <SheetHeader>
-                  <SheetTitle>ECOMMERCE</SheetTitle>
+                  <SheetTitle className="font-serif tracking-widest uppercase">VOREN</SheetTitle>
                 </SheetHeader>
                 {renderMobileMenuItems()}
               </SheetContent>

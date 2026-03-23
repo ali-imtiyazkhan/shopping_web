@@ -23,7 +23,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 export default function SuperAdminManageProductPage() {
     const [formState, setFormState] = useState({
         name: "",
-        brand: "",
+        brand: "voren",
         description: "",
         category: "",
         gender: "",
@@ -69,7 +69,7 @@ export default function SuperAdminManageProductPage() {
         if (!getCurrentEditedProductId) {
             setFormState({
                 name: "",
-                brand: "",
+                brand: "voren",
                 description: "",
                 category: "",
                 gender: "",
