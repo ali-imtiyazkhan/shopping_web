@@ -23,6 +23,7 @@ router.post(
   "/update-feature-products",
   authenticateJwt,
   isSuperAdmin,
+  upload.array("images", 10),
   updateFeaturedProducts
 );
 router.get("/fetch-feature-products", authenticateJwt, getFeaturedProducts);

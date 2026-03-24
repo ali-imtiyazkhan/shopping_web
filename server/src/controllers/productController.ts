@@ -129,6 +129,7 @@ export const updateProduct = async (
   req: AuthenticatedRequest,
   res: Response
 ): Promise<void> => {
+  const files = req.files as Express.Multer.File[];
   try {
     const { id } = req.params;
     const {
@@ -146,8 +147,27 @@ export const updateProduct = async (
 
     const existingProduct = await prisma.product.findUnique({ where: { id } });
     if (!existingProduct) {
+      if (files && files.length > 0) {
+        await Promise.all(files.map((file) => fs.unlink(file.path).catch(() => {})));
+      }
       sendError(res, 404, "Product not found");
       return;
+    }
+
+    let imageUrls = existingProduct.images;
+
+    if (files && files.length > 0) {
+      const uploadPromises = files.map((file) =>
+        cloudinary.uploader.upload(file.path, {
+          folder: "ecommerce",
+        })
+      );
+      const uploadResults = await Promise.all(uploadPromises);
+      const newImageUrls = uploadResults.map((result) => result.secure_url);
+      imageUrls = [...imageUrls, ...newImageUrls];
+
+      // Clean up local files
+      await Promise.all(files.map((file) => fs.unlink(file.path).catch(() => {})));
     }
 
     const updatedProduct = await prisma.product.update({
@@ -163,12 +183,16 @@ export const updateProduct = async (
         price: price ? parseFloat(price) : undefined,
         stock: stock ? parseInt(stock) : undefined,
         rating: rating ? parseInt(rating) : undefined,
+        images: imageUrls,
       },
     });
 
     sendResponse(res, 200, true, "Product updated successfully", updatedProduct);
   } catch (e) {
     console.error(e);
+    if (files && files.length > 0) {
+      await Promise.all(files.map((file) => fs.unlink(file.path).catch(() => {})));
+    }
     sendError(res, 500, "Failed to update product");
   }
 };
