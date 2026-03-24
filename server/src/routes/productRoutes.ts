@@ -29,7 +29,7 @@ router.get(
 
 router.get("/fetch-client-products", authenticateJwt, getProductsForClient);
 router.get("/:id", authenticateJwt, getProductByID);
-router.put("/:id", authenticateJwt, isSuperAdmin, updateProduct);
+router.put("/:id", authenticateJwt, isSuperAdmin, upload.array("images", 10), updateProduct);
 router.delete("/:id", authenticateJwt, isSuperAdmin, deleteProduct);
 
 export default router;

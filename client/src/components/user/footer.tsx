@@ -11,13 +11,13 @@ const footerLinks = {
   ],
   support: [
     { name: "Contact Us", href: "/contact" },
-    { name: "FAQs & Shipping", href: "/faq" },
+    { name: "FAQs", href: "/faq" },
+    { name: "Shipping & Returns", href: "/shipping" },
     { name: "Size Guide", href: "/faq#size-guide" },
   ],
   legal: [
     { name: "Privacy Policy", href: "/privacy-policy" },
     { name: "Terms of Service", href: "/terms-of-service" },
-    { name: "Cookie Policy", href: "/cookie-policy" },
   ],
 };
 
@@ -77,6 +77,22 @@ function Footer() {
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Trust Badges */}
+        <div className="py-12 border-t border-border flex flex-wrap justify-center gap-12 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
+           <div className="flex items-center space-x-2 text-[10px] tracking-[0.3em] uppercase">
+             <div className="w-1 h-1 rounded-full bg-foreground"></div>
+             <span>Secure Checkout</span>
+           </div>
+           <div className="flex items-center space-x-2 text-[10px] tracking-[0.3em] uppercase">
+             <div className="w-1 h-1 rounded-full bg-foreground"></div>
+             <span>Ethical Sourcing</span>
+           </div>
+           <div className="flex items-center space-x-2 text-[10px] tracking-[0.3em] uppercase">
+             <div className="w-1 h-1 rounded-full bg-foreground"></div>
+             <span>Luxury Guaranteed</span>
+           </div>
         </div>
 
         <div className="pt-16 border-t border-border flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-[10px] tracking-[0.3em] uppercase text-foreground/30">

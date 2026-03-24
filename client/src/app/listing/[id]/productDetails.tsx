@@ -19,6 +19,20 @@ function ProductDetailsContent({ id }: { id: string }) {
   const [selectedColor, setSelectedColor] = useState(0);
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [showStickyBar, setShowStickyBar] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const atcButton = document.getElementById("main-atc-button");
+      if (atcButton) {
+        const rect = atcButton.getBoundingClientRect();
+        setShowStickyBar(rect.bottom < 0);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -152,11 +166,28 @@ function ProductDetailsContent({ id }: { id: string }) {
             </div>
             <div>
               <Button
+                id="main-atc-button"
                 className={"w-full bg-black text-white hover:bg-gray-800"}
                 onClick={handleAddToCart}
               >
                 ADD TO CART
               </Button>
+            </div>
+            
+            {/* Trust Badges */}
+            <div className="pt-6 border-t border-gray-100 flex items-center justify-between gap-4 opacity-50 grayscale">
+              <div className="flex flex-col items-center gap-1 group">
+                <div className="w-1.5 h-1.5 rounded-full bg-black"></div>
+                <span className="text-[9px] tracking-[0.2em] uppercase font-medium">Free Shipping</span>
+              </div>
+              <div className="flex flex-col items-center gap-1 group">
+                <div className="w-1.5 h-1.5 rounded-full bg-black"></div>
+                <span className="text-[9px] tracking-[0.2em] uppercase font-medium">Secure Payment</span>
+              </div>
+              <div className="flex flex-col items-center gap-1 group">
+                <div className="w-1.5 h-1.5 rounded-full bg-black"></div>
+                <span className="text-[9px] tracking-[0.2em] uppercase font-medium">Authentic</span>
+              </div>
             </div>
           </div>
         </div>
@@ -182,6 +213,29 @@ function ProductDetailsContent({ id }: { id: string }) {
               </p>
             </TabsContent>
           </Tabs>
+        </div>
+      </div>
+
+      {/* Sticky Add to Cart Bar */}
+      <div className={`fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 z-50 transition-transform duration-300 transform ${showStickyBar ? "translate-y-0" : "translate-y-full"}`}>
+        <div className="container mx-auto flex items-center justify-between gap-4">
+          <div className="hidden sm:flex items-center gap-4">
+            <img src={product.images[0]} alt={product.name} className="w-12 h-12 object-cover" />
+            <div>
+              <p className="text-xs font-semibold tracking-wider uppercase">{product.name}</p>
+              <p className="text-xs text-gray-400">${product.price.toFixed(2)}</p>
+            </div>
+          </div>
+          <div className="flex-1 flex gap-4 max-w-md">
+            <div className="flex items-center border border-gray-200">
+               <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-3 py-2 text-xs">-</button>
+               <span className="w-8 text-center text-xs">{quantity}</span>
+               <button onClick={() => setQuantity(quantity + 1)} className="px-3 py-2 text-xs">+</button>
+            </div>
+            <Button onClick={handleAddToCart} className="flex-1 bg-black text-white text-[10px] tracking-[0.2em] uppercase py-6">
+              ADD TO CART
+            </Button>
+          </div>
         </div>
       </div>
     </div>

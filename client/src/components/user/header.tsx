@@ -127,8 +127,13 @@ function Header() {
   };
 
   return (
-    <header className="sticky bg-background/80 backdrop-blur-md top-0 z-50 border-b border-border">
-      <div className="container mx-auto px-4">
+    <header className="sticky top-0 z-50">
+      {/* Announcement Bar */}
+      <div className="bg-foreground text-background py-2 text-[9px] tracking-[0.4em] uppercase text-center font-medium">
+        Complimentary worldwide shipping on orders over $500
+      </div>
+      <div className="bg-background/80 backdrop-blur-md border-b border-border">
+        <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           <Link className="text-2xl font-serif tracking-[0.2em]" href="/">
             VOREN
@@ -196,6 +201,7 @@ function Header() {
             </Sheet>
           </div>
         </div>
+      </div>
       </div>
     </header>
   );
