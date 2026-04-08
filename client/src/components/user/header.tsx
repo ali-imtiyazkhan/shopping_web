@@ -1,8 +1,9 @@
 "use client";
 
-import { ArrowLeft, Menu, ShoppingBag, ShoppingCart, User } from "lucide-react";
+import { ArrowLeft, Menu, ShoppingBag, ShoppingCart, User, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { CartDrawer } from "./CartDrawer";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -118,13 +119,14 @@ function Header() {
                 className="w-full justify-start"
               >
                 <ShoppingBag className="mr-1 h-4 w-4" />
-                Cart (2)
+                Cart ({items.length})
               </Button>
             </div>
           </div>
         );
     }
   };
+
 
   return (
     <header className="sticky top-0 z-50">
@@ -152,15 +154,16 @@ function Header() {
             </nav>
           </div>
           <div className="hidden lg:flex items-center space-x-4">
-            <div
-              className="relative cursor-pointer"
-              onClick={() => router.push("/cart")}
-            >
-              <ShoppingCart />
-              <span className="absolute -top-1 -right-1 h-4 w-4 bg-black text-white text-xs rounded-full flex items-center justify-center">
-                {items?.length}
-              </span>
-            </div>
+            <CartDrawer>
+              <div className="relative cursor-pointer hover:opacity-70 transition-opacity">
+                <ShoppingBag className="w-5 h-5" />
+                {items?.length > 0 && (
+                  <span className="absolute -top-1 -right-1 h-3.5 w-3.5 bg-black text-white text-[8px] rounded-full flex items-center justify-center font-bold">
+                    {items?.length}
+                  </span>
+                )}
+              </div>
+            </CartDrawer>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button size="icon" variant={"ghost"}>
