@@ -4,6 +4,7 @@ import { Button } from "../../components/ui/button";
 import { useSettingsStore } from "../../store/useSettingsStore";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const gridItems = [
   {
@@ -108,38 +109,99 @@ function HomePage() {
         </div>
       </section>
 
-      {/* grid section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-center text-3xl font-semibold mb-2">
-            THE WINTER EDIT
-          </h2>
-          <p className="text-center text-gray-500 mb-8">
-            Designed to keep your satisfaction and warmth
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {gridItems.map((gridItem, index) => (
-              <div key={index} className="relative group overflow-hidden">
-                <div className="aspect-[3/4]">
-                  <img
-                    src={gridItem.image}
-                    alt={gridItem.title}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                  />
-                </div>
-                <div className="absolute inset-0 bg-black bg-opacity-25 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="text-center text-white p-4">
-                    <h3 className="text-xl font-semibold mb-2">
-                      {gridItem.title}
-                    </h3>
-                    <p className="text-sm">{gridItem.subtitle}</p>
-                    <Button className="mt-4 bg-white text-black hover:bg-gray-100">
-                      SHOP NOW
-                    </Button>
-                  </div>
-                </div>
+      {/* Curated Collections Section */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+            <div className="space-y-4 max-w-xl">
+              <span className="text-primary text-[10px] tracking-[0.5em] uppercase font-semibold">Discovery</span>
+              <h2 className="text-4xl md:text-5xl font-serif">CURATED COLLECTIONS</h2>
+              <p className="text-foreground/40 text-xs tracking-[0.2em] leading-relaxed">Explore our meticulously chosen archives, designed for those who appreciate the finer details of modern tailoring.</p>
+            </div>
+            <Link href="/listing" className="text-[10px] tracking-[0.3em] uppercase border-b border-black pb-1 hover:opacity-50 transition-opacity">
+              View All Archives
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-[800px]">
+            {/* Mens - Large tile */}
+            <div className="md:col-span-8 group relative overflow-hidden">
+              <img 
+                src="https://images.unsplash.com/photo-1488161628813-04466f872be2?q=80&w=1964&auto=format&fit=crop" 
+                alt="Men" 
+                className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-700" />
+              <div className="absolute inset-0 p-12 flex flex-col justify-end items-start text-white">
+                <span className="text-[10px] tracking-[0.5em] mb-4 opacity-70">ESSENTIALS</span>
+                <h3 className="text-4xl font-serif mb-6 uppercase tracking-wider">The Modern Man</h3>
+                <Link href="/listing?category=Men" className="px-8 py-4 bg-white text-black text-[10px] tracking-[0.3em] uppercase hover:bg-black hover:text-white transition-all duration-300">
+                  Shop Men
+                </Link>
               </div>
-            ))}
+            </div>
+
+            {/* Women & Kids vertical stack */}
+            <div className="md:col-span-4 flex flex-col gap-6">
+               <div className="flex-1 group relative overflow-hidden">
+                  <img 
+                    src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?q=80&w=2070&auto=format&fit=crop" 
+                    alt="Women" 
+                    className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-700" />
+                  <div className="absolute inset-x-0 bottom-0 p-8 text-white">
+                    <h3 className="text-2xl font-serif mb-4 uppercase tracking-wider">Elegance</h3>
+                    <Link href="/listing?category=Women" className="text-[10px] tracking-[0.3em] uppercase border-b border-white pb-1">
+                      Shop Women
+                    </Link>
+                  </div>
+               </div>
+               <div className="flex-1 group relative overflow-hidden">
+                  <img 
+                    src="https://images.unsplash.com/photo-1519234110483-8a76033005c4?q=80&w=1974&auto=format&fit=crop" 
+                    alt="Kids" 
+                    className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-105"
+                  />
+                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-700" />
+                   <div className="absolute inset-x-0 bottom-0 p-8 text-white">
+                    <h3 className="text-2xl font-serif mb-4 uppercase tracking-wider">Heritage</h3>
+                    <Link href="/listing?category=Kids" className="text-[10px] tracking-[0.3em] uppercase border-b border-white pb-1">
+                      Shop Kids
+                    </Link>
+                  </div>
+               </div>
+            </div>
+
+            {/* Accessories & Footwear horizontal stack */}
+            <div className="md:col-span-12 grid grid-cols-2 gap-6 h-64">
+               <div className="group relative overflow-hidden">
+                  <img 
+                    src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1999&auto=format&fit=crop" 
+                    alt="Accessories" 
+                    className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors duration-700" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Link href="/listing?category=Accessories" className="text-white text-[12px] tracking-[0.6em] uppercase font-bold text-center px-4 py-2 border border-white/40 backdrop-blur-sm group-hover:bg-white group-hover:text-black transition-all">
+                      Accessories
+                    </Link>
+                  </div>
+               </div>
+               <div className="group relative overflow-hidden">
+                  <img 
+                    src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070&auto=format&fit=crop" 
+                    alt="Footwear" 
+                    className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors duration-700" />
+                   <div className="absolute inset-0 flex items-center justify-center">
+                    <Link href="/listing?category=Footwear" className="text-white text-[12px] tracking-[0.6em] uppercase font-bold text-center px-4 py-2 border border-white/40 backdrop-blur-sm group-hover:bg-white group-hover:text-black transition-all">
+                      Footwear
+                    </Link>
+                  </div>
+               </div>
+            </div>
           </div>
         </div>
       </section>
